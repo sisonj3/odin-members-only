@@ -1,0 +1,38 @@
+<html>
+
+    <body>
+        <h1>Sign Up</h1>
+        
+        <%- include("partials/errors.ejs") %>
+
+        <form method="POST" action="/sign-up">
+            <div>
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required="required">
+            </div>
+
+            <div>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required="required">
+            </div>
+
+            <div>
+                <label for="username">Username or Email:</label>
+                <input type="text" id="username" name="username" required="required">
+            </div>
+
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required="required">
+            </div>
+
+            <div>
+                <label for="passConfirm">Confirm Password:</label>
+                <input type="password" name="passConfirm" id="passConfirm" required="required">
+            </div>
+
+            <button type="submit">Sign Up</button>
+        </form>
+    </body>
+
+</html>
