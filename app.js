@@ -8,6 +8,7 @@ const app = express();
 
 const indexRouter = require("./routes/indexRouter");
 const signUpRouter = require("./routes/signUpRouter");
+const secretRouter = require("./routes/secretRouter");
 
 // Set up ejs
 app.set("views", path.join(__dirname, "views"));
@@ -23,5 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 // Routers
 app.use("/", indexRouter);
 app.use("/sign-up", signUpRouter);
+app.use("/membership", secretRouter);
 
 app.listen(3000, () => console.log("app listening on port 3000!"));

@@ -3,10 +3,18 @@ const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 const db = require("../db/queries");
 
-// Confirm password
-const confirmPass = body('passConfirm').custom((value, { req }) => {
+// Validate User
+const validate = [
+    body("username").custom(async value => {
+        const user = await db.getUser(value);
+        if (user) {
+            throw new Error('Username or Email already in use');
+        }
+    }),
+    body('passConfirm').custom((value, { req }) => {
     return value === req.body.password
-}).withMessage('Passwords must match!');
+    }).withMessage('Passwords must match!'),
+];
 
 // Render sign up form
 const newSignUpForm = (req, res) => {
@@ -14,7 +22,7 @@ const newSignUpForm = (req, res) => {
 };
 
 // Get info from form to add user to database
-const signUpUser = [confirmPass, asyncHandler(async (req, res) => {
+const signUpUser = [validate, asyncHandler(async (req, res) => {
 
     // Check for validation errors
     const errors = validationResult(req);
@@ -24,15 +32,15 @@ const signUpUser = [confirmPass, asyncHandler(async (req, res) => {
 
     console.log("Signing Up User!");
 
-    console.log(req.body);
+    //console.log(req.body);
 
     // Add info to database
     bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-        db.addUser(req.body.firstName, req.body.lastName, req.body.username, hashedPassword);
+        await db.addUser(req.body.firstName, req.body.lastName, req.body.username, hashedPassword);
     });
 
     // Redirect to different page
-    res.redirect("/");
+    res.redirect(`/membership/${req.body.username}`);
 })
 ];
 
