@@ -37,8 +37,6 @@ passport.use(new LocalStrategy({passReqToCallback: true}, async (req, username, 
             return done(null, false, { message: "Incorrect password" });
         }
 
-        // Check if user is a member
-
         return done(null, user);
     } catch (err) {
         return done(err);
@@ -68,7 +66,18 @@ const logInUser = passport.authenticate("local", {
     failureMessage: true
 });
 
+const logOutUser = (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+
+        res.redirect("/");
+    });
+};
+
 module.exports = {
     renderLogIn,
     logInUser,
+    logOutUser,
 };
