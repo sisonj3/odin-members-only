@@ -2,54 +2,73 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 const db = require("../db/queries");
+const passport = require("passport");
+const { render } = require("ejs");
+const LocalStrategy = require('passport-local').Strategy;
 
-// Check if account with username exists and password is correct
-const validate = [
-    body("username").custom(async value => {
-        const user = await db.getUser(value);
-        if (!user) {
-            throw new Error('Username or Email does not exist');
-        }
-    }),
-    body("password").custom(async (value, { req }) => {
-        // Get password associated with username
-        const user = await db.getUser(req.body.username);
-        
-        // If user exists check password
-        if (user) {
-            // Check if passwords match
-            const match = await bcrypt.compare(value, user.password);
-            
-            if (!match) {
-                throw new Error('Password is incorrect');
-            }
-            
-        }
-    }),
-];
-
-// Log user into session after validating account credentials
-const logInUser = [validate, asyncHandler(async (req, res) => {
-
-    // Check for validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        console.log('Log in failed!');
-        return res.status(400).render("logIn", { errors: errors.array(), });
+const renderLogIn = (req, res) => {
+    // If there are errors display them
+    if (req.session.messages) {
+        res.render("logIn", { errors: req.session.messages, })
+    } else {
+        res.render("logIn");
     }
     
-    // If not a member redirect to "/membership/${req.body.username}"
-    const user = await db.getUser(req.body.username);
+}
 
-    if (!user.ismember) {
-        res.redirect(`/membership/${user.username}`);
-        return;
+// Setting up LocalStrategy
+passport.use(new LocalStrategy({passReqToCallback: true}, async (req, username, password, done) => {
+
+    try {
+        const user = await db.getUser(username);
+
+        // Clear messages
+        req.session.messages = undefined;
+
+        // Check if user exists
+        if (!user) {
+            return done(null, false, { message: "Incorrect username" });
+        }
+
+        // Get use bcrypt.compare to validate password
+        const match = await bcrypt.compare(password, user.password);
+
+        if (!match) {
+            return done(null, false, { message: "Incorrect password" });
+        }
+
+        // Check if user is a member
+
+        return done(null, user);
+    } catch (err) {
+        return done(err);
     }
 
-    console.log("Logging in user!");
 })
-];
+);
+
+// Serialization and Deserialization
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await db.getUserById(id);
+
+        done(null, user);
+    } catch (err) {
+        done(err);
+    }
+});
+
+const logInUser = passport.authenticate("local", {
+    successRedirect: "/message",
+    failureRedirect: "/",
+    failureMessage: true
+});
 
 module.exports = {
+    renderLogIn,
     logInUser,
 };

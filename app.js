@@ -2,13 +2,14 @@ const express = require("express");
 const session = require("express-session");
 const path = require("node:path");
 const passport = require("passport");
-const LocalStrategy = require('passport-local').Strategy;
+//const LocalStrategy = require('passport-local').Strategy;
 
 const app = express();
 
 const indexRouter = require("./routes/indexRouter");
 const signUpRouter = require("./routes/signUpRouter");
 const secretRouter = require("./routes/secretRouter");
+const messageRouter = require("./routes/messageRouter");
 
 // Set up ejs
 app.set("views", path.join(__dirname, "views"));
@@ -25,5 +26,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", indexRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/membership", secretRouter);
+app.use("/message", messageRouter);
 
 app.listen(3000, () => console.log("app listening on port 3000!"));

@@ -5,7 +5,7 @@ const { Router } = require("express");
 const indexRouter = Router();
 
 // Render views/index.ejs
-indexRouter.get("/", (req, res) => res.render("logIn"));
+indexRouter.get("/", indexController.renderLogIn);
 
 // Validate login info
 indexRouter.post("/", indexController.logInUser);

@@ -9,9 +9,15 @@ async function addUser(first, last, user, pass) {
         ('${first}', '${last}', '${user}', '${pass}', false);`);
 }
 
-// Get id of user
+// Get user by username
 async function getUser(user) {
     const { rows } = await pool.query(`SELECT * FROM users WHERE username = '${user}';`);
+    return rows[0];
+}
+
+// Get user by id
+async function getUserById(id) {
+    const { rows } = await pool.query(`SELECT * FROM users WHERE id = ${id};`);
     return rows[0];
 }
 
@@ -33,6 +39,7 @@ async function checkMembership(user) {
 module.exports = {
     addUser,
     getUser,
+    getUserById,
     updateMembership,
     checkMembership
 };
