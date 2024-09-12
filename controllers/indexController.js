@@ -1,18 +1,22 @@
-const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
-const { body, validationResult } = require("express-validator");
 const db = require("../db/queries");
 const passport = require("passport");
-const { render } = require("ejs");
 const LocalStrategy = require('passport-local').Strategy;
 
 const renderLogIn = (req, res) => {
-    // If there are errors display them
-    if (req.session.messages) {
-        res.render("logIn", { errors: req.session.messages, })
+
+    // If no user is logged in
+    if (!req.user) {
+        // If there are errors display them
+        if (req.session.messages) {
+            res.render("logIn", { errors: req.session.messages, })
+        } else {
+            res.render("logIn");
+        }
     } else {
-        res.render("logIn");
+        res.redirect("/message");
     }
+    
     
 }
 

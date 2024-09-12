@@ -2,6 +2,20 @@
     <body>
         <h1>Create message</h1>
 
+        <form method="post" action="/message">
+            <div>
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" required="required">
+            </div>
+
+            <div>
+                <label for="message">Message</label>
+                <input type="text" id="message" name="message" required="required">
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+
         <button onclick="location.href='/log-out';">Log Out</button>
     </body>
 </html>

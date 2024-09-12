@@ -9,6 +9,14 @@ async function addUser(first, last, user, pass) {
         ('${first}', '${last}', '${user}', '${pass}', false);`);
 }
 
+// Add message to db
+async function addMessage(userId, title, message) {
+    await pool.query(`
+        INSERT INTO messages (userid, title, message, createtime)
+        VALUES
+        (${userId}, '${title}', '${message}', CURRENT_TIMESTAMP)`);
+}
+
 // Get user by username
 async function getUser(user) {
     const { rows } = await pool.query(`SELECT * FROM users WHERE username = '${user}';`);
@@ -29,17 +37,12 @@ async function updateMembership(user, isMember) {
         WHERE username = '${user}';`);
 }
 
-// Check user membership
-async function checkMembership(user) {
 
-}
-
-// Check return row with specific username
 
 module.exports = {
     addUser,
+    addMessage,
     getUser,
     getUserById,
     updateMembership,
-    checkMembership
 };
