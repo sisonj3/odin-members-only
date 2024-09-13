@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../db/queries");
 
-const renderMessagePage = (req, res) => {
+const renderMessagePage = asyncHandler(async(req, res) => {
     const user = req.user;
 
     // If no user is logged in redirect back to log in page
@@ -14,12 +14,14 @@ const renderMessagePage = (req, res) => {
     console.log(user);
 
     if (user.ismember) {
-        res.render("messageDisplay");
+        const messages = await db.getMessages();
+        console.log(messages);
+        res.render("messageDisplay", { messages: messages });
     } else {
         res.redirect(`/membership/${user.username}`);
     }
     
-};
+});
 
 const renderMessageForm = (req, res) => {
     const user = req.user;

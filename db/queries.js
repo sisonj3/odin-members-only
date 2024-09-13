@@ -29,6 +29,13 @@ async function getUserById(id) {
     return rows[0];
 }
 
+// Get all messages
+async function getMessages() {
+    const { rows } = await pool.query(`SELECT users.username, messages.title, messages.message, messages.createtime
+         FROM messages JOIN users ON messages.userid = users.id;`);
+    return rows;
+}
+
 // Update user membership
 async function updateMembership(user, isMember) {
     await pool.query(`
@@ -44,5 +51,6 @@ module.exports = {
     addMessage,
     getUser,
     getUserById,
+    getMessages,
     updateMembership,
 };

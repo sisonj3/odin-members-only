@@ -4,6 +4,18 @@
 
         <button onclick="location.href='/message/create';">Create Message</button>
 
+        <% if (locals.messages) {%>
+            <ul>
+                <% messages.forEach((message)=> { %>
+                    <li>
+                        <h1><%= message.title %> by <%= message.username %></h1>
+                        <p><%= message.message %></p>
+                        <p><%= message.createtime %></p>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } %>
+
         <button onclick="location.href='/log-out';">Log Out</button>
     </body>
 </html>
