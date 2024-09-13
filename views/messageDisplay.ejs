@@ -8,9 +8,15 @@
             <ul>
                 <% messages.forEach((message)=> { %>
                     <li>
+
                         <h1><%= message.title %> by <%= message.username %></h1>
                         <p><%= message.message %></p>
                         <p><%= message.createtime %></p>
+
+                        <% if (user.isadmin) { %>
+                            <button onclick="location.href='/message/delete/<%= message.id %>';">Delete</button>
+                        <% } %>
+
                     </li>
                 <% }); %>
             </ul>

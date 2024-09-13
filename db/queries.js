@@ -4,9 +4,9 @@ const pool = require("./pool");
 // Add user to db and return user id
 async function addUser(first, last, user, pass) {
     await pool.query(`
-        INSERT INTO users (firstname, lastname, username, password, ismember)
+        INSERT INTO users (firstname, lastname, username, password, ismember, isadmin)
         VALUES
-        ('${first}', '${last}', '${user}', '${pass}', false);`);
+        ('${first}', '${last}', '${user}', '${pass}', false, false);`);
 }
 
 // Add message to db
@@ -15,6 +15,11 @@ async function addMessage(userId, title, message) {
         INSERT INTO messages (userid, title, message, createtime)
         VALUES
         (${userId}, '${title}', '${message}', CURRENT_TIMESTAMP)`);
+}
+
+// Delete message from db
+async function deleteMessage(id) {
+    await pool.query(`DELETE FROM messages WHERE id = ${id};`);
 }
 
 // Get user by username
@@ -31,7 +36,7 @@ async function getUserById(id) {
 
 // Get all messages
 async function getMessages() {
-    const { rows } = await pool.query(`SELECT users.username, messages.title, messages.message, messages.createtime
+    const { rows } = await pool.query(`SELECT messages.id, users.username, messages.title, messages.message, messages.createtime
          FROM messages JOIN users ON messages.userid = users.id;`);
     return rows;
 }
@@ -44,13 +49,21 @@ async function updateMembership(user, isMember) {
         WHERE username = '${user}';`);
 }
 
-
+// Update user admin privileges
+async function updateAdmin(user, isAdmin) {
+    await pool.query(`
+        UPDATE users
+        SET ismember = ${isAdmin}, isadmin = ${isAdmin}
+        WHERE username = '${user}';`);
+}
 
 module.exports = {
     addUser,
     addMessage,
+    deleteMessage,
     getUser,
     getUserById,
     getMessages,
     updateMembership,
+    updateAdmin
 };

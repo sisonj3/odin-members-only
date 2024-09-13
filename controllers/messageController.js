@@ -16,7 +16,7 @@ const renderMessagePage = asyncHandler(async(req, res) => {
     if (user.ismember) {
         const messages = await db.getMessages();
         console.log(messages);
-        res.render("messageDisplay", { messages: messages });
+        res.render("messageDisplay", { user: user, messages: messages });
     } else {
         res.redirect(`/membership/${user.username}`);
     }
@@ -51,8 +51,17 @@ const addMessageToDB = asyncHandler(async (req, res) => {
     res.redirect('/message');
 });
 
+const deleteMessage = asyncHandler(async (req, res) => {
+    console.log("Deleting message...");
+
+    await db.deleteMessage(req.params.messageID);
+
+    res.redirect('/message');
+});
+
 module.exports = {
     renderMessagePage,
     renderMessageForm,
     addMessageToDB,
+    deleteMessage
 };

@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const db = require("../db/queries");
 
 const secret = 'Bizza';
+const adminSecret = 'Sundae';
 
 // Render views/secret.ejs
 const renderSecret = (req, res) => {
@@ -16,7 +17,10 @@ const updateMembership = asyncHandler(async (req, res) => {
 
     console.log(`Answer from user "${user}" is ${userInput}`);
 
-    if (userInput == secret) {
+    if (userInput == adminSecret) {
+        db.updateAdmin(user, true);
+        res.redirect("/");
+    } else if (userInput == secret) {
         db.updateMembership(user, true);
         res.redirect("/");
     } else {
